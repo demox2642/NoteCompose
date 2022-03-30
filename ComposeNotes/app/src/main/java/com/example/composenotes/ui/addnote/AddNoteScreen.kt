@@ -36,9 +36,6 @@ import com.example.composenotes.utils.SPStrings
 import com.example.composenotes.utils.StorageUtils
 import com.google.accompanist.coil.rememberCoilPainter
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.google.accompanist.permissions.rememberPermissionState
-import io.dar.base_ui.attachphotoandimage.EMPTY_IMAGE_URI
-import kotlinx.coroutines.launch
 import org.koin.androidx.compose.get
 
 @Composable
@@ -56,6 +53,12 @@ fun AddNotePreview() {
 @Composable
 fun AddNoteContent(viewModel: AddNoteViewModel = get()) {
     var name by remember { mutableStateOf("") }
+    var nameValidation by remember {
+        mutableStateOf(false)
+    }
+    var noteTextValidation by remember {
+        mutableStateOf(false)
+    }
     var noteText by remember { mutableStateOf("") }
     val imageData by viewModel.imageList.collectAsState()
     val showAlertDialog by viewModel.showAlertDialog.collectAsState()
@@ -65,12 +68,12 @@ fun AddNoteContent(viewModel: AddNoteViewModel = get()) {
             viewModel.rememberImage(Uri.parse(it.toString().replace("content://com.android.providers.media.documents/document/image%3A", "content://media/external/images/media/")).toString())
         }
 
-    var showGallerySelect by remember { mutableStateOf(false) }
-    var imageUri by remember { mutableStateOf(EMPTY_IMAGE_URI) }
-
-    val openDialog = remember { mutableStateOf(false) }
-
-    val state = rememberPermissionState(Manifest.permission.READ_EXTERNAL_STORAGE)
+//    var showGallerySelect by remember { mutableStateOf(false) }
+//    var imageUri by remember { mutableStateOf(EMPTY_IMAGE_URI) }
+//
+//    val openDialog = remember { mutableStateOf(false) }
+//
+//    val state = rememberPermissionState(Manifest.permission.READ_EXTERNAL_STORAGE)
 
     val context = LocalContext.current
     val actualPermission = StorageUtils.hasReadStoragePermission(context)
@@ -79,8 +82,6 @@ fun AddNoteContent(viewModel: AddNoteViewModel = get()) {
             ActivityResultContracts.RequestPermission()
         ) { isGranted: Boolean ->
             if (isGranted) {
-
-                Log.e("Test", "requestPermissionLauncher isGranted=$isGranted")
                 launcher.launch(
                     "image/*"
                 )
@@ -89,8 +90,6 @@ fun AddNoteContent(viewModel: AddNoteViewModel = get()) {
             }
         }
     val changePermissionState: () -> Unit = {
-        // state.launchPermissionRequest()
-        Log.e("Test", "permission changePermissionState")
         requestPermissionLauncher.launch(
             Manifest.permission.READ_EXTERNAL_STORAGE
         )
@@ -128,7 +127,18 @@ fun AddNoteContent(viewModel: AddNoteViewModel = get()) {
                 }
 
                 FloatingActionButton(
-                    onClick = { viewModel.addNote(name = name, note_text = noteText) },
+                    onClick = {
+                        if (name.isEmpty() || noteText.isEmpty()) {
+                            if (name.isEmpty()) {
+                                nameValidation = true
+                            }
+                            if (noteText.isEmpty()) {
+                                noteTextValidation = true
+                            }
+                        } else {
+                            viewModel.addNote(name = name, note_text = noteText)
+                        }
+                    },
                     elevation = FloatingActionButtonDefaults.elevation(8.dp)
 
                 ) {
@@ -149,8 +159,13 @@ fun AddNoteContent(viewModel: AddNoteViewModel = get()) {
                             .padding(8.dp)
                             .fillMaxWidth(),
                         value = name,
-                        onValueChange = { name = it },
-                        label = { Text(stringResource(id = R.string.name)) }
+                        onValueChange = {
+                            name = it
+                            nameValidation = false
+                        },
+                        label = { Text(stringResource(id = R.string.name)) },
+                        isError = nameValidation,
+                        singleLine = true
                     )
                 }
                 Spacer(modifier = Modifier.height(20.dp))
@@ -159,7 +174,12 @@ fun AddNoteContent(viewModel: AddNoteViewModel = get()) {
                         .padding(8.dp)
                         .fillMaxWidth(),
                     value = noteText,
-                    onValueChange = { noteText = it },
+                    onValueChange = {
+                        noteText = it
+                        noteTextValidation = false
+                    },
+                    isError = noteTextValidation,
+
                     label = { Text(stringResource(id = R.string.note_text)) }
                 )
                 Spacer(modifier = Modifier.height(20.dp))

@@ -12,4 +12,5 @@
     <string name="permission_error_message">Sorry but you can`t add image from storage </string>
     <string name = "permission_conferm_bt"> Allow </string>
     <string name = "permission_dismiss_bt"> Later </string>
+    <string name="validation_error">field cannot be empty</string>
 </resources>

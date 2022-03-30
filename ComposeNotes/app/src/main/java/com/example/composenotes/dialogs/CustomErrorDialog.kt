@@ -71,7 +71,6 @@ fun CustomErrorDialog(
                 Modifier
                     .fillMaxWidth()
                     .padding(top = 10.dp),
-                // .background(Purple80),
                 horizontalArrangement = Arrangement.SpaceAround
             ) {
 

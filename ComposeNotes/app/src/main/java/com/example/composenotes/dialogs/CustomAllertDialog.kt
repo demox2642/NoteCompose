@@ -43,9 +43,6 @@ fun CustomAllertDialog(
                 painter = painterResource(id = R.drawable.lamp_light_bulb_idea_icon),
                 contentDescription = null,
                 contentScale = ContentScale.Fit,
-//                colorFilter  = ColorFilter.tint(
-//                    color = Purple40
-//                ),
                 modifier = Modifier
                     .padding(top = 35.dp)
                     .height(70.dp)
