@@ -7,6 +7,9 @@
     <string name="note_text">note text</string>
     <string name = "permission_message"> To attach images, you must grant the application access to the gallery. </string>
     <string name = "permission_title"> Request permissions </string>
+    <string name="permission_error">Permission ERROR</string>
+    <string name="exit">Exit</string>
+    <string name="permission_error_message">Sorry but you can`t add image from storage </string>
     <string name = "permission_conferm_bt"> Allow </string>
     <string name = "permission_dismiss_bt"> Later </string>
 </resources>

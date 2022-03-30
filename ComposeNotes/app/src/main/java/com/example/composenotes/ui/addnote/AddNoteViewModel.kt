@@ -16,6 +16,20 @@ class AddNoteViewModel(
     private val _imageList = MutableStateFlow<List<String>>(emptyList())
     val imageList: StateFlow<List<String>> = _imageList
 
+    private val _showAlertDialog = MutableStateFlow(false)
+    val showAlertDialog: StateFlow<Boolean> = _showAlertDialog
+
+    fun changeVisibleAlertDialog() {
+        _showAlertDialog.value = _showAlertDialog.value.not()
+    }
+
+    private val _showErrorDialog = MutableStateFlow(false)
+    val showErrorDialog: StateFlow<Boolean> = _showErrorDialog
+
+    fun changeVisibleErrorDialog() {
+        _showErrorDialog.value = _showErrorDialog.value.not()
+    }
+
     fun addNote(
         name: String,
         note_text: String
@@ -32,8 +46,8 @@ class AddNoteViewModel(
         }
     }
 
-    fun rememberImage(uri: String){
-        Log.e("AddNoteViewModel"," uri = $uri")
-        _imageList.value  = _imageList.value + uri
+    fun rememberImage(uri: String) {
+        Log.e("AddNoteViewModel", " uri = $uri")
+        _imageList.value = _imageList.value + uri
     }
 }
