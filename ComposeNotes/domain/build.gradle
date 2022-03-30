@@ -1,0 +1,15 @@
+plugins {
+    id 'java-library'
+    id 'org.jetbrains.kotlin.jvm'
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_7
+    targetCompatibility = JavaVersion.VERSION_1_7
+}
+
+var koin_version= "3.2.0-beta-1"
+
+dependencies {
+    implementation "io.insert-koin:koin-core:$koin_version"
+}
