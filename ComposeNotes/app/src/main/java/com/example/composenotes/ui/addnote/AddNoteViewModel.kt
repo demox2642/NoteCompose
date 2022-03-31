@@ -3,6 +3,7 @@ package com.example.composenotes.ui.addnote
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.domain.models.ImageForNote
 import com.example.domain.models.Notes
 import com.example.domain.usecase.AddNote
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -47,7 +48,8 @@ class AddNoteViewModel(
                 Notes(
                     name = name,
                     note_text = note_text,
-                    add_date = calendar.timeInMillis
+                    add_date = calendar.timeInMillis,
+                    images = _imageList.value.map { ImageForNote(id = null, note_id = null, image_linc = it) }
                 )
             )
         }

@@ -62,15 +62,15 @@ class NotesRepositoryImpl : NoteRepository {
         )
         if (!note.images.isNullOrEmpty()) {
 
-//            noteImageDao.insertNoteImage(
-//                note.images!!.map { it ->
-//                    NoteImage(
-//                        id = null,
-//                        note_id = note.id,
-//                        image_linc = it.image_linc
-//                    )
-//                }
-//            )
+            noteImageDao.insertNoteImage(
+                note.images!!.map { it ->
+                    NoteImage(
+                        id = null,
+                        note_id = noteDao.getLastNote(),
+                        image_linc = it.image_linc
+                    )
+                }
+            )
         }
     }
 
@@ -90,7 +90,7 @@ class NotesRepositoryImpl : NoteRepository {
                 noteImageDao.updateNoteImage(
                     NoteImage(
                         id = note.images!![i].id,
-                        note_id = note.images!![i].note_id,
+                        note_id = noteDao.getLastNote(),
                         image_linc = note.images!![i].image_linc
                     )
                 )

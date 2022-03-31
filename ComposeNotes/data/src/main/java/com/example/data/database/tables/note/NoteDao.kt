@@ -19,6 +19,9 @@ interface NoteDao {
     @Query("DELETE FROM ${NoteContract.TABLE_NAME}")
     suspend fun deleteAllNote()
 
+    @Query("SELECT MAX(${NoteContract.Colums.ID}) FROM ${NoteContract.TABLE_NAME}")
+    suspend fun getLastNote(): Long
+
     @Update
     fun updateNote(note: Note)
 }
