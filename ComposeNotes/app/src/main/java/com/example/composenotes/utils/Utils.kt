@@ -1,9 +1,9 @@
 package com.example.composenotes.utils
 
-import java.util.*
+import java.text.SimpleDateFormat
 
-inline fun Long.toCalendarString(): String{
-    val c = Calendar.getInstance()
-    c.timeInMillis = this
-    return "${c.get(Calendar.DAY_OF_MONTH)}.${c.get(Calendar.MONTH)}.${c.get(Calendar.YEAR)}"
+inline fun Long.toCalendarString(): String {
+
+    val formatter = SimpleDateFormat("dd.MM.yyyy")
+    return formatter.format(this)
 }

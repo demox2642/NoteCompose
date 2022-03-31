@@ -16,4 +16,7 @@
     <string name="validation_error">field cannot be empty</string>
     <string name="close">Close</string>
     <string name="enter_link">enter link</string>
+    <string name="add_date">add date: </string>
+    <string name="refactor_date">refactor date: </string>
+    <string name="refactor">refactor</string>
 </resources>

@@ -217,11 +217,14 @@ fun AddNoteContent(navController: NavHostController, viewModel: AddNoteViewModel
                 }
                 Spacer(modifier = Modifier.height(20.dp))
                 if (imageData.isNotEmpty()) {
-                    LazyRow(content = {
-                        items(imageData.size) { it ->
-                            ListItem(Uri.parse(imageData[it]), viewModel::deleteImage)
+                    LazyRow(
+                        modifier = Modifier.padding(8.dp),
+                        content = {
+                            items(imageData.size) { it ->
+                                ListItem(Uri.parse(imageData[it]), viewModel::deleteImage)
+                            }
                         }
-                    })
+                    )
                 }
             }
         }

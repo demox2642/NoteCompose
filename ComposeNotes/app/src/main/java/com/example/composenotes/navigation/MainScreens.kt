@@ -5,8 +5,9 @@ sealed class MainScreens(
 ) {
     object NoteListScreen : MainScreens("note_list")
     object AddNoteScreen : MainScreens("add_note")
+    object NoteDetail : MainScreens("detail_note")
 
-    fun withArgs(vararg args: Int): String {
+    fun withArgs(vararg args: Long): String {
         return buildString {
             append(route)
             args.forEach { args ->

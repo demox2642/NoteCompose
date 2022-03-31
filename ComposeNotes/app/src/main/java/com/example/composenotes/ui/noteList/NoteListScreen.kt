@@ -1,6 +1,7 @@
 package com.example.composenotes.ui.noteList
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.GridCells
 import androidx.compose.foundation.lazy.LazyVerticalGrid
@@ -68,6 +69,9 @@ fun NoteListContent(noteList: List<Notes>, deleteNote: (Long) -> Unit, navContro
                         modifier = Modifier
                             .size(sizeCard.dp)
                             .padding(4.dp)
+                            .clickable {
+                                navController.navigate(MainScreens.NoteDetail.withArgs(noteList[count].id!!))
+                            }
                             .clip(RoundedCornerShape(12.dp)),
                         deleteNote = deleteNote
                     )
