@@ -61,7 +61,6 @@ class AddNoteViewModel(
     }
 
     fun rememberImage(uri: String) {
-        Log.e("AddNoteViewModel", " uri = $uri")
         _imageList.value = _imageList.value + uri
     }
 

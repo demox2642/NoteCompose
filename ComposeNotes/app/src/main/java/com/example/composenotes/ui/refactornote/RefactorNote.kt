@@ -34,6 +34,7 @@ import com.example.composenotes.utils.toNotes
 import com.example.domain.models.Notes
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import org.koin.androidx.compose.get
+import java.util.*
 
 @Composable
 fun RefactorNote(noteArg: String, navController: NavHostController) {
@@ -66,7 +67,7 @@ fun RefactorAddNoteContent(notes: Notes, navController: NavHostController, viewM
     val showEnterLincDialog by viewModel.showEnterLincDialog.collectAsState()
     val launcher =
         rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) {
-            viewModel.rememberImage(Uri.parse(it.toString().replace("content://com.android.providers.media.documents/document/image%3A", "content://media/external/images/media/")).toString())
+            viewModel.rememberImage(noteId = notes.id!!, uri = Uri.parse(it.toString().replace("content://com.android.providers.media.documents/document/image%3A", "content://media/external/images/media/")).toString())
         }
 
     val context = LocalContext.current
@@ -130,7 +131,17 @@ fun RefactorAddNoteContent(notes: Notes, navController: NavHostController, viewM
                                 noteTextValidation = true
                             }
                         } else {
-//                            viewModel.addNote(name = name, note_text = noteText)
+                            val calendar = Calendar.getInstance()
+                            viewModel.updateNote(
+                                Notes(
+                                    id = notes.id,
+                                    name = name,
+                                    note_text = noteText,
+                                    add_date = notes.add_date,
+                                    refactor_date = calendar.timeInMillis,
+                                    images = imageData
+                                )
+                            )
                             navController.navigate(MainScreens.NoteListScreen.route)
                         }
                     },
@@ -210,7 +221,7 @@ fun RefactorAddNoteContent(notes: Notes, navController: NavHostController, viewM
                         dismissButtonText = stringResource(id = R.string.permission_dismiss_bt),
                         closeDialog = { viewModel.changeVisibleEnterLinc() },
                         saveLinc = {
-                            viewModel.rememberImage(it)
+                            viewModel.rememberImage(noteId = notes.id!!, uri = it)
                             viewModel.changeVisibleEnterLinc()
                         }
                     )
@@ -221,7 +232,7 @@ fun RefactorAddNoteContent(notes: Notes, navController: NavHostController, viewM
                         modifier = Modifier.padding(8.dp),
                         content = {
                             items(imageData.size) { it ->
-                                RefactorItem(Uri.parse(imageData[it])) { viewModel.deleteImage(it) }
+                                RefactorItem(Uri.parse(imageData[it].image_linc)) { viewModel.deleteImage(it) }
                             }
                         }
                     )
@@ -242,6 +253,6 @@ fun RefactorItem(uri: Uri, delete: () -> Unit) {
     if (actualPermission) {
         val order = sharedPref.getString(SPStrings.default_order, "DESC")!!
         StorageUtils.setQueryOrder(order, context = context)
-          CreateGrid(uri, 150.dp, delete)
+        CreateGrid(uri, 150.dp, delete)
     }
 }

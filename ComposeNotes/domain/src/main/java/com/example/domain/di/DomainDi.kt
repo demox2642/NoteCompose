@@ -9,5 +9,4 @@ val domainModule = module {
     single { DeleteNote(get()) }
     single { GetNote(get()) }
     single { GetNoteList(get()) }
-    single { UpdeteNote(get()) }
 }

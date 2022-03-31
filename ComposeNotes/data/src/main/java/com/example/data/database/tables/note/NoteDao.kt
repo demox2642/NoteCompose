@@ -21,7 +21,4 @@ interface NoteDao {
 
     @Query("SELECT MAX(${NoteContract.Colums.ID}) FROM ${NoteContract.TABLE_NAME}")
     suspend fun getLastNote(): Long
-
-    @Update
-    fun updateNote(note: Note)
 }

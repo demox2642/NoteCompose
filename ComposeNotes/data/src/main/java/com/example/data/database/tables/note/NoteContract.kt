@@ -9,6 +9,5 @@ object NoteContract {
         const val NOTE_TEXT = "note_text"
         const val ADD_DATE = "add_date"
         const val REFACTOR_DATE = "refactor_date"
-        const val NOTE_IMAGES = "noteImages"
     }
 }

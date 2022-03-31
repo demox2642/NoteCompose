@@ -74,35 +74,6 @@ class NotesRepositoryImpl : NoteRepository {
         }
     }
 
-    override suspend fun updateNote(note: Notes) {
-        noteDao.updateNote(
-            Note(
-                id = note.id,
-                name = note.name,
-                note_text = note.note_text,
-                add_date = note.add_date,
-                refactor_date = null
-            )
-        )
-
-        if (!note.images.isNullOrEmpty()) {
-            for (i in 0 until note.images!!.size) {
-                noteImageDao.updateNoteImage(
-                    NoteImage(
-                        id = note.images!![i].id,
-                        note_id = noteDao.getLastNote(),
-                        image_linc = note.images!![i].image_linc
-                    )
-                )
-            }
-        } else {
-
-            if (noteImageDao.getNoteImage(noteId = note.id!!).isNotEmpty()) {
-                noteImageDao.deleteNoteImage(note.id!!)
-            }
-        }
-    }
-
     override suspend fun deleteNote(noteId: Long) {
         if (noteImageDao.getNoteImage(noteId = noteId).isNotEmpty()) {
             noteImageDao.deleteNoteImage(noteId)
