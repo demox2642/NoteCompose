@@ -13,6 +13,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -21,8 +22,10 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -30,12 +33,14 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.example.composenotes.R
-import com.example.composenotes.dialogs.CustomAllertDialog
+import com.example.composenotes.dialogs.CustomAlertDialog
+import com.example.composenotes.dialogs.CustomEnterLincDialog
 import com.example.composenotes.dialogs.CustomErrorDialog
 import com.example.composenotes.utils.SPStrings
 import com.example.composenotes.utils.StorageUtils
 import com.google.accompanist.coil.rememberCoilPainter
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.skydoves.landscapist.glide.GlideImage
 import org.koin.androidx.compose.get
 
 @Composable
@@ -63,6 +68,7 @@ fun AddNoteContent(viewModel: AddNoteViewModel = get()) {
     val imageData by viewModel.imageList.collectAsState()
     val showAlertDialog by viewModel.showAlertDialog.collectAsState()
     val showErrorDialog by viewModel.showErrorDialog.collectAsState()
+    val showEnterLincDialog by viewModel.showEnterLincDialog.collectAsState()
     val launcher =
         rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) {
             viewModel.rememberImage(Uri.parse(it.toString().replace("content://com.android.providers.media.documents/document/image%3A", "content://media/external/images/media/")).toString())
@@ -119,7 +125,7 @@ fun AddNoteContent(viewModel: AddNoteViewModel = get()) {
                 }
 
                 FloatingActionButton(
-                    onClick = { /*do something*/ },
+                    onClick = { viewModel.changeVisibleEnterLinc() },
                     elevation = FloatingActionButtonDefaults.elevation(8.dp)
 
                 ) {
@@ -187,7 +193,7 @@ fun AddNoteContent(viewModel: AddNoteViewModel = get()) {
                     Dialog(
                         onDismissRequest = {},
                         content = {
-                            CustomAllertDialog(
+                            CustomAlertDialog(
                                 title = stringResource(id = R.string.permission_title),
                                 message = stringResource(id = R.string.permission_message),
                                 confermButtonText = stringResource(id = R.string.permission_conferm_bt),
@@ -206,14 +212,25 @@ fun AddNoteContent(viewModel: AddNoteViewModel = get()) {
                         title = stringResource(id = R.string.permission_error),
                         message = stringResource(id = R.string.permission_error_message),
                         confermButtonText = stringResource(id = R.string.exit),
-                        closeDialog = { viewModel.changeVisibleErrorDialog() }
+                        closeDialog = { viewModel.changeVisibleErrorDialog() },
+                    )
+                }
+                if (showEnterLincDialog) {
+                    CustomEnterLincDialog(
+                        confermButtonText = stringResource(id = R.string.save),
+                        dismissButtonText = stringResource(id = R.string.permission_dismiss_bt),
+                        closeDialog = { viewModel.changeVisibleEnterLinc() },
+                        saveLinc = {
+                            viewModel.rememberImage(it)
+                            viewModel.changeVisibleEnterLinc()
+                        }
                     )
                 }
                 Spacer(modifier = Modifier.height(20.dp))
                 if (imageData.isNotEmpty()) {
                     LazyRow(content = {
                         items(imageData.size) { it ->
-                            ListItem(Uri.parse(imageData[it]))
+                            ListItem(Uri.parse(imageData[it]), viewModel::deleteImage)
                         }
                     })
                 }
@@ -224,7 +241,7 @@ fun AddNoteContent(viewModel: AddNoteViewModel = get()) {
 
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
-fun ListItem(uri: Uri) {
+fun ListItem(uri: Uri, delete: (String) -> Unit) {
     val context = LocalContext.current
     val actualPermission = StorageUtils.hasReadStoragePermission(context)
     val name = SPStrings.preferences
@@ -235,20 +252,21 @@ fun ListItem(uri: Uri) {
         val order = sharedPref.getString(SPStrings.default_order, "DESC")!!
         StorageUtils.setQueryOrder(order, context = context)
         // if (uri != null) {
-        CreateGrid(uri, 150.dp)
+        CreateGrid(uri, 150.dp, delete)
         // }
     }
 }
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-private fun CreateGrid(photos: Uri, size: Dp) {
+private fun CreateGrid(photos: Uri, size: Dp, delete: (String) -> Unit) {
     Log.e("Test", "permission is true photos = $photos")
     Card(
         modifier = Modifier
             .size(size)
             .clip(RoundedCornerShape(12.dp))
     ) {
+
         if (photos.toString().startsWith("content://media/external/")) {
             Image(
                 painter = rememberCoilPainter(
@@ -264,17 +282,30 @@ private fun CreateGrid(photos: Uri, size: Dp) {
                 contentScale = ContentScale.Crop
             )
         } else {
-            Image(
-                painter = rememberCoilPainter(photos),
-                contentDescription = null,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(1.dp)
-                    .clickable {
-                    }
-                    .fillMaxWidth(),
-                contentScale = ContentScale.Crop
+
+            GlideImage(
+                imageModel = photos,
+                contentScale = ContentScale.Crop,
+                error = ImageBitmap.imageResource(R.drawable.ic_net_error)
             )
+        }
+        Row(
+            modifier = Modifier
+                .padding(4.dp)
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.End
+        ) {
+            OutlinedButton(
+                onClick = { delete(photos.toString()) },
+                modifier = Modifier.size(25.dp),
+                shape = CircleShape,
+                contentPadding = PaddingValues(0.dp)
+            ) {
+                Icon(
+                    painterResource(id = R.drawable.ic_plus),
+                    contentDescription = "KeyboardArrowDown"
+                )
+            }
         }
     }
 }

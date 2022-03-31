@@ -23,6 +23,13 @@ class AddNoteViewModel(
         _showAlertDialog.value = _showAlertDialog.value.not()
     }
 
+    private val _showEnterLincDialog = MutableStateFlow(false)
+    val showEnterLincDialog: StateFlow<Boolean> = _showEnterLincDialog
+
+    fun changeVisibleEnterLinc() {
+        _showEnterLincDialog.value = _showEnterLincDialog.value.not()
+    }
+
     private val _showErrorDialog = MutableStateFlow(false)
     val showErrorDialog: StateFlow<Boolean> = _showErrorDialog
 
@@ -49,5 +56,9 @@ class AddNoteViewModel(
     fun rememberImage(uri: String) {
         Log.e("AddNoteViewModel", " uri = $uri")
         _imageList.value = _imageList.value + uri
+    }
+
+    fun deleteImage(uri: String) {
+        _imageList.value = _imageList.value - uri
     }
 }
