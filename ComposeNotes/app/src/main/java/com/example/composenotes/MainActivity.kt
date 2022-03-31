@@ -16,6 +16,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.lifecycleScope
+import com.example.composenotes.navigation.Navigation
 import com.example.composenotes.ui.addnote.AddNoteScreen
 import com.example.composenotes.ui.theme.ComposeNotesTheme
 import com.example.composenotes.utils.SPStrings
@@ -51,13 +52,13 @@ class MainActivity : ComponentActivity() {
         }
         setContent {
             ComposeNotesTheme {
-                // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
                     // NoteListScreen()
-                    AddNoteScreen()
+                    //AddNoteScreen()
+                    Navigation()
                 }
             }
         }

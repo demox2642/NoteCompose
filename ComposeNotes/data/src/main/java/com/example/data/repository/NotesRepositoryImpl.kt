@@ -103,11 +103,11 @@ class NotesRepositoryImpl : NoteRepository {
         }
     }
 
-    override suspend fun deleteNote(note: Notes) {
-        if (noteImageDao.getNoteImage(noteId = note.id!!).isNotEmpty()) {
-            noteImageDao.deleteNoteImage(note.id!!)
+    override suspend fun deleteNote(noteId: Long) {
+        if (noteImageDao.getNoteImage(noteId = noteId).isNotEmpty()) {
+            noteImageDao.deleteNoteImage(noteId)
         }
-        noteDao.deleteNote(note.id!!)
+        noteDao.deleteNote(noteId)
     }
 
     override suspend fun deleteAllNote() {

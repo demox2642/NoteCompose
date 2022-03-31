@@ -2,6 +2,7 @@
     <string name="app_name">ComposeNotes</string>
     <string name="name">name</string>
     <string name="add">add</string>
+    <string name="delete">delete</string>
     <string name="save">save</string>
     <string name="add_image">add image</string>
     <string name="note_text">note text</string>

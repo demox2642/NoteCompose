@@ -9,6 +9,7 @@ import com.example.domain.usecase.AddNote
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import java.lang.Exception
 import java.util.*
 
 class AddNoteViewModel(
@@ -44,14 +45,18 @@ class AddNoteViewModel(
     ) {
         val calendar = Calendar.getInstance()
         viewModelScope.launch {
-            addNote.execute(
-                Notes(
-                    name = name,
-                    note_text = note_text,
-                    add_date = calendar.timeInMillis,
-                    images = _imageList.value.map { ImageForNote(id = null, note_id = null, image_linc = it) }
+            try {
+                addNote.execute(
+                    Notes(
+                        name = name,
+                        note_text = note_text,
+                        add_date = calendar.timeInMillis,
+                        images = _imageList.value.map { ImageForNote(id = null, note_id = null, image_linc = it) }
+                    )
                 )
-            )
+            } catch (e: Exception) {
+                Log.e("addNote", "Error: $e")
+            }
         }
     }
 

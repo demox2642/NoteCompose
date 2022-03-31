@@ -28,14 +28,15 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import androidx.navigation.NavHostController
 import com.example.composenotes.R
 import com.example.composenotes.dialogs.CustomAlertDialog
 import com.example.composenotes.dialogs.CustomEnterLincDialog
 import com.example.composenotes.dialogs.CustomErrorDialog
+import com.example.composenotes.navigation.MainScreens
 import com.example.composenotes.utils.SPStrings
 import com.example.composenotes.utils.StorageUtils
 import com.google.accompanist.coil.rememberCoilPainter
@@ -44,19 +45,13 @@ import com.skydoves.landscapist.glide.GlideImage
 import org.koin.androidx.compose.get
 
 @Composable
-fun AddNoteScreen() {
-    AddNoteContent()
-}
-
-@Preview
-@Composable
-fun AddNotePreview() {
-    AddNoteContent()
+fun AddNoteScreen(navController: NavHostController) {
+    AddNoteContent(navController)
 }
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
-fun AddNoteContent(viewModel: AddNoteViewModel = get()) {
+fun AddNoteContent(navController: NavHostController, viewModel: AddNoteViewModel = get()) {
     var name by remember { mutableStateOf("") }
     var nameValidation by remember {
         mutableStateOf(false)
@@ -74,13 +69,6 @@ fun AddNoteContent(viewModel: AddNoteViewModel = get()) {
             viewModel.rememberImage(Uri.parse(it.toString().replace("content://com.android.providers.media.documents/document/image%3A", "content://media/external/images/media/")).toString())
         }
 
-//    var showGallerySelect by remember { mutableStateOf(false) }
-//    var imageUri by remember { mutableStateOf(EMPTY_IMAGE_URI) }
-//
-//    val openDialog = remember { mutableStateOf(false) }
-//
-//    val state = rememberPermissionState(Manifest.permission.READ_EXTERNAL_STORAGE)
-
     val context = LocalContext.current
     val actualPermission = StorageUtils.hasReadStoragePermission(context)
     val requestPermissionLauncher =
@@ -92,7 +80,7 @@ fun AddNoteContent(viewModel: AddNoteViewModel = get()) {
                     "image/*"
                 )
             } else {
-                Log.e("Test", "requestPermissionLauncher isGranted=$isGranted")
+                Log.e("Permission", " Error: requestPermissionLauncher isGranted=$isGranted")
             }
         }
     val changePermissionState: () -> Unit = {
@@ -143,6 +131,7 @@ fun AddNoteContent(viewModel: AddNoteViewModel = get()) {
                             }
                         } else {
                             viewModel.addNote(name = name, note_text = noteText)
+                            navController.navigate(MainScreens.NoteListScreen.route)
                         }
                     },
                     elevation = FloatingActionButtonDefaults.elevation(8.dp)
