@@ -9,6 +9,7 @@ import androidx.navigation.navArgument
 import com.example.composenotes.ui.addnote.AddNoteScreen
 import com.example.composenotes.ui.noteList.NoteListScreen
 import com.example.composenotes.ui.notedetail.NoteDetail
+import com.example.composenotes.ui.refactornote.RefactorNote
 
 @Composable
 fun Navigation() {
@@ -29,17 +30,16 @@ fun Navigation() {
         ) { entry ->
             NoteDetail(noteId = entry.arguments?.getLong("linc")!!, navController = navController)
         }
-//        composable(
-//            route = MainScreens.ImageDetail.route + "/{linc}",
-//            arguments = listOf(
-//                navArgument("linc") {
-//                    type = NavType.IntType
-//                }
-//            )
-//        ) { entry ->
-//
-        //
-        //
-        //          ImageDetail(imageIndex = entry.arguments?.getInt("linc")!!)
+
+        composable(
+            route = MainScreens.RefactorNote.route + "/{linc}",
+            arguments = listOf(
+                navArgument("linc") {
+                    type = NavType.StringType
+                }
+            )
+        ) { entry ->
+            RefactorNote(noteArg = entry.arguments?.getString("linc")!!, navController = navController)
+        }
     }
 }

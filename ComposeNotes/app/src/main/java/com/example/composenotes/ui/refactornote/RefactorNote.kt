@@ -1,4 +1,4 @@
-package com.example.composenotes.ui.addnote
+package com.example.composenotes.ui.refactornote
 
 import android.Manifest
 import android.annotation.SuppressLint
@@ -7,28 +7,18 @@ import android.net.Uri
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavHostController
@@ -37,29 +27,39 @@ import com.example.composenotes.dialogs.CustomAlertDialog
 import com.example.composenotes.dialogs.CustomEnterLincDialog
 import com.example.composenotes.dialogs.CustomErrorDialog
 import com.example.composenotes.navigation.MainScreens
+import com.example.composenotes.ui.addnote.CreateGrid
 import com.example.composenotes.utils.SPStrings
 import com.example.composenotes.utils.StorageUtils
-import com.google.accompanist.coil.rememberCoilPainter
+import com.example.composenotes.utils.toNotes
+import com.example.domain.models.Notes
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.skydoves.landscapist.glide.GlideImage
 import org.koin.androidx.compose.get
 
 @Composable
-fun AddNoteScreen(navController: NavHostController) {
-    AddNoteContent(navController)
+fun RefactorNote(noteArg: String, navController: NavHostController) {
+
+    val note = noteArg.toNotes()
+
+    if (note != null) {
+        RefactorAddNoteContent(note, navController)
+    }
 }
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
-fun AddNoteContent(navController: NavHostController, viewModel: AddNoteViewModel = get()) {
-    var name by remember { mutableStateOf("") }
+fun RefactorAddNoteContent(notes: Notes, navController: NavHostController, viewModel: RefactorNoteViewModel = get()) {
+    if (!notes.images.isNullOrEmpty()) {
+        viewModel.rememberImageList(notes.images!!)
+    }
+
+    var name by remember { mutableStateOf(notes.name) }
     var nameValidation by remember {
         mutableStateOf(false)
     }
     var noteTextValidation by remember {
         mutableStateOf(false)
     }
-    var noteText by remember { mutableStateOf("") }
+    var noteText by remember { mutableStateOf(notes.note_text) }
     val imageData by viewModel.imageList.collectAsState()
     val showAlertDialog by viewModel.showAlertDialog.collectAsState()
     val showErrorDialog by viewModel.showErrorDialog.collectAsState()
@@ -130,7 +130,7 @@ fun AddNoteContent(navController: NavHostController, viewModel: AddNoteViewModel
                                 noteTextValidation = true
                             }
                         } else {
-                            viewModel.addNote(name = name, note_text = noteText)
+//                            viewModel.addNote(name = name, note_text = noteText)
                             navController.navigate(MainScreens.NoteListScreen.route)
                         }
                     },
@@ -221,7 +221,7 @@ fun AddNoteContent(navController: NavHostController, viewModel: AddNoteViewModel
                         modifier = Modifier.padding(8.dp),
                         content = {
                             items(imageData.size) { it ->
-                                ListItem(Uri.parse(imageData[it])) { viewModel.deleteImage(it) }
+                                RefactorItem(Uri.parse(imageData[it])) { viewModel.deleteImage(it) }
                             }
                         }
                     )
@@ -233,70 +233,15 @@ fun AddNoteContent(navController: NavHostController, viewModel: AddNoteViewModel
 
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
-fun ListItem(uri: Uri, delete: () -> Unit) {
+fun RefactorItem(uri: Uri, delete: () -> Unit) {
     val context = LocalContext.current
     val actualPermission = StorageUtils.hasReadStoragePermission(context)
     val name = SPStrings.preferences
     val sharedPref = context.getSharedPreferences(name, Context.MODE_PRIVATE)
 
     if (actualPermission) {
-
         val order = sharedPref.getString(SPStrings.default_order, "DESC")!!
         StorageUtils.setQueryOrder(order, context = context)
-
-        CreateGrid(uri, 150.dp, delete)
-    }
-}
-
-@OptIn(ExperimentalFoundationApi::class)
-@Composable
-fun CreateGrid(photos: Uri, size: Dp, delete: () -> Unit) {
-
-    Card(
-        modifier = Modifier
-            .size(size)
-            .clip(RoundedCornerShape(12.dp))
-    ) {
-
-        if (photos.toString().startsWith("content://media/external/")) {
-            Image(
-                painter = rememberCoilPainter(
-                    request = photos
-                ),
-                contentDescription = null,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(1.dp)
-                    .clickable {
-                    }
-                    .fillMaxWidth(),
-                contentScale = ContentScale.Crop
-            )
-        } else {
-
-            GlideImage(
-                imageModel = photos,
-                contentScale = ContentScale.Crop,
-                error = ImageBitmap.imageResource(R.drawable.ic_net_error)
-            )
-        }
-        Row(
-            modifier = Modifier
-                .padding(4.dp)
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.End
-        ) {
-            OutlinedButton(
-                onClick = delete,
-                modifier = Modifier.size(25.dp),
-                shape = CircleShape,
-                contentPadding = PaddingValues(0.dp)
-            ) {
-                Icon(
-                    painterResource(id = R.drawable.ic_plus),
-                    contentDescription = "KeyboardArrowDown"
-                )
-            }
-        }
+          CreateGrid(uri, 150.dp, delete)
     }
 }

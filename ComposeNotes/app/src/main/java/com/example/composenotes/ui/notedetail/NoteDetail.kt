@@ -23,6 +23,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.composenotes.R
+import com.example.composenotes.navigation.MainScreens
+import com.example.composenotes.utils.setAsJson
 import com.example.composenotes.utils.toCalendarString
 import com.example.domain.models.ImageForNote
 import com.example.domain.models.Notes
@@ -36,12 +38,12 @@ fun NoteDetail(noteId: Long, navController: NavHostController, viewModel: NoteDe
     val note by viewModel.note.collectAsState()
     val imageList by viewModel.imageList.collectAsState()
     if (note != null) {
-        NoteContent(note!!, imageList)
+        NoteContent(note!!, imageList, navController)
     }
 }
 
 @Composable
-fun NoteContent(note: Notes, imageList: List<ImageForNote>?) {
+fun NoteContent(note: Notes, imageList: List<ImageForNote>?, navController: NavHostController) {
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -50,7 +52,7 @@ fun NoteContent(note: Notes, imageList: List<ImageForNote>?) {
             ExtendedFloatingActionButton(
                 icon = { Icon(Icons.Default.Create, stringResource(id = R.string.add)) },
                 text = { Text(stringResource(id = R.string.refactor)) },
-                onClick = { },
+                onClick = { navController.navigate(MainScreens.RefactorNote.withStringArgs(note.setAsJson())) },
                 elevation = FloatingActionButtonDefaults.elevation(8.dp),
                 modifier = Modifier.padding(bottom = 4.dp, end = 4.dp)
 
