@@ -19,4 +19,6 @@
     <string name="add_date">add date: </string>
     <string name="refactor_date">refactor date: </string>
     <string name="refactor">refactor</string>
+    <string name="delete_all_note"> Delete all notes</string>
+    <string name="menu">Menu</string>
 </resources>

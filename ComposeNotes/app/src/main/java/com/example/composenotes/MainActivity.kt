@@ -17,7 +17,6 @@ import androidx.compose.material.Surface
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.lifecycleScope
 import com.example.composenotes.navigation.Navigation
-import com.example.composenotes.ui.addnote.AddNoteScreen
 import com.example.composenotes.ui.theme.ComposeNotesTheme
 import com.example.composenotes.utils.SPStrings
 import com.example.composenotes.utils.StorageUtils
@@ -56,8 +55,6 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
-                    // NoteListScreen()
-                    //AddNoteScreen()
                     Navigation()
                 }
             }

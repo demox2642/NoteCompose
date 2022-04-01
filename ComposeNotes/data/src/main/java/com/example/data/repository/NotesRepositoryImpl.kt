@@ -57,20 +57,31 @@ class NotesRepositoryImpl : NoteRepository {
                 name = note.name,
                 note_text = note.note_text,
                 add_date = note.add_date,
-                refactor_date = null
+                refactor_date = note.refactor_date
             )
         )
         if (!note.images.isNullOrEmpty()) {
-
-            noteImageDao.insertNoteImage(
-                note.images!!.map { it ->
-                    NoteImage(
-                        id = null,
-                        note_id = noteDao.getLastNote(),
-                        image_linc = it.image_linc
-                    )
-                }
-            )
+            if (note.id == null) {
+                noteImageDao.insertNoteImage(
+                    note.images!!.map { it ->
+                        NoteImage(
+                            id = null,
+                            note_id = noteDao.getLastNote(),
+                            image_linc = it.image_linc
+                        )
+                    }
+                )
+            } else {
+                noteImageDao.insertNoteImage(
+                    note.images!!.map { it ->
+                        NoteImage(
+                            id = null,
+                            note_id = note.id!!,
+                            image_linc = it.image_linc
+                        )
+                    }
+                )
+            }
         }
     }
 

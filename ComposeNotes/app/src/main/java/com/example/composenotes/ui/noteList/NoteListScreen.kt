@@ -9,7 +9,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalConfiguration
@@ -30,23 +32,32 @@ fun NoteListScreen(navController: NavHostController) {
 fun NoteList(navController: NavHostController, viewModel: NoteListViewModel = get()) {
 
     val noteList by viewModel.noteList.collectAsState()
+    val menuState by viewModel.showMenu.collectAsState()
 
-    NoteListContent(noteList = noteList, viewModel::deleteNote, navController)
+    NoteListContent(noteList = noteList, viewModel::deleteNote, viewModel::deleteAll, menuState, viewModel::changeVisibleMenu, navController)
 }
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun NoteListContent(noteList: List<Notes>, deleteNote: (Long) -> Unit, navController: NavHostController) {
+fun NoteListContent(noteList: List<Notes>, deleteNote: (Long) -> Unit, daleteAllNote: () -> Unit, menuState: Boolean, changeMenuState: () -> Unit, navController: NavHostController) {
     val configuration = LocalConfiguration.current
 
     val dimensions = if (configuration.screenWidthDp <= 400) 2 else 3
     val sizeCard = (configuration.screenWidthDp - 8) / dimensions
 
-    val scaffoldState = rememberScaffoldState()
-    val scope = rememberCoroutineScope()
-
     Scaffold(
+
         modifier = Modifier.fillMaxSize(),
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(text = stringResource(id = R.string.app_name))
+                },
+                actions = {
+                    TopAppBarDropdownMenu(daleteAllNote, menuState, changeMenuState)
+                }
+            )
+        },
         floatingActionButtonPosition = FabPosition.End,
         floatingActionButton = {
             ExtendedFloatingActionButton(
@@ -80,4 +91,32 @@ fun NoteListContent(noteList: List<Notes>, deleteNote: (Long) -> Unit, navContro
         }
 
     )
+}
+
+@Composable
+fun TopAppBarDropdownMenu(deleteAllNote: () -> Unit, menuState: Boolean, changeMenuState: () -> Unit) {
+
+    Box(
+        Modifier
+            .wrapContentSize(Alignment.TopEnd)
+    ) {
+        IconButton(onClick = changeMenuState) {
+            Icon(
+                Icons.Filled.MoreVert,
+                contentDescription = stringResource(id = R.string.menu)
+            )
+        }
+    }
+
+    DropdownMenu(
+        expanded = menuState,
+        onDismissRequest = changeMenuState,
+    ) {
+        DropdownMenuItem(
+            onClick = deleteAllNote
+
+        ) {
+            Text(stringResource(id = R.string.delete_all_note))
+        }
+    }
 }

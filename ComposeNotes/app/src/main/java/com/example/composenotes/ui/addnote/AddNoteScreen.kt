@@ -294,7 +294,7 @@ fun CreateGrid(photos: Uri, size: Dp, delete: () -> Unit) {
             ) {
                 Icon(
                     painterResource(id = R.drawable.ic_plus),
-                    contentDescription = "KeyboardArrowDown"
+                    contentDescription = stringResource(id = R.string.delete)
                 )
             }
         }

@@ -73,7 +73,6 @@ fun CustomAlertDialog(
                 Modifier
                     .fillMaxWidth()
                     .padding(top = 10.dp),
-                // .background(Purple80),
                 horizontalArrangement = Arrangement.SpaceAround
             ) {
 
@@ -84,7 +83,6 @@ fun CustomAlertDialog(
                     Text(
                         dismissButtonText,
                         fontWeight = FontWeight.Bold,
-                        // color = PurpleGrey40,
                         modifier = Modifier.padding(top = 5.dp, bottom = 5.dp)
                     )
                 }

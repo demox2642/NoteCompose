@@ -2,9 +2,7 @@ package com.example.data.database
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
-import androidx.room.TypeConverters
 import com.example.data.database.NoteDB.Companion.DB_VERSION
-import com.example.data.database.tables.converters.PurchaseDateConverter
 import com.example.data.database.tables.image.NoteImage
 import com.example.data.database.tables.image.NoteImageDao
 import com.example.data.database.tables.note.Note
@@ -17,8 +15,6 @@ import com.example.data.database.tables.note.NoteDao
     ],
     version = DB_VERSION
 )
-
-@TypeConverters(PurchaseDateConverter::class)
 
 abstract class NoteDB : RoomDatabase() {
 

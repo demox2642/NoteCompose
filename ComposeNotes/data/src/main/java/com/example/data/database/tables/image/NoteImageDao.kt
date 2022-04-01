@@ -21,7 +21,4 @@ interface NoteImageDao {
 
     @Delete
     suspend fun deleteNoteImage(noteImage: NoteImage)
-
-    @Update
-    fun updateNoteImage(noteImage: NoteImage)
 }
